@@ -4,7 +4,7 @@ import { useState, type ReactNode } from "react";
 import {
   LayoutDashboard,
   Users,
-  NotebookPabs,
+  NotebookTabs,
   BellRing,
   BarChart3,
   Plane,
@@ -28,7 +28,7 @@ type NavItem = {
 
 const NAV: NavItem[] = [
   { to: "/dashboard", label: "Dashboard", icon: LayoutDashboard },
-  { to: "/transactions", label: "Register", icon: NotebookPabs },
+  { to: "/transactions", label: "Register", icon: NotebookTabs },
   { to: "/clients", label: "Clients", icon: Users },
   { to: "/reminders", label: "Reminders", icon: BellRing },
   { to: "/reports", label: "Reports", icon: BarChart3, adminOnly: true },
