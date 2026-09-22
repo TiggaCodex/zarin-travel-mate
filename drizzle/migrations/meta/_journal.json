@@ -8,6 +8,13 @@
       "when": 1790075018489,
       "tag": "0000_zarin_phase1_foundation",
       "breakpoints": true
+    },
+    {
+      "idx": 1,
+      "version": "7",
+      "when": 1790075037416,
+      "tag": "0001_first_user_becomes_admin",
+      "breakpoints": true
     }
   ]
 }
