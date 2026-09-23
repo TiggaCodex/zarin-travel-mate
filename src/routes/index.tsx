@@ -1,24 +1,52 @@
-import { createFileRoute } from "@tanstack/react-router";
+import { createFileRoute, useNavigate } from "@tanstack/react-router";
+import { useEffect } from "react";
+import { Loader2, Plane } from "lucide-react";
 
-// No head() here: the home route inherits title/description/og/twitter from
-// __root.tsx, and ships no og:image so serve-time hosting can inject the
-// project's social preview (explicit og:image or latest screenshot).
+import { useSession } from "@/hooks/useAuth";
+
 export const Route = createFileRoute("/")({
+  head: () => ({
+    meta: [
+      { title: "Zarin Travels & Tours — Client & Flight Register" },
+      {
+        name: "description",
+        content:
+          "Secure management system for Zarin Travels & Tours: client bookings, fares, payments, commission and travel reminders.",
+      },
+      { property: "og:title", content: "Zarin Travels & Tours — Client & Flight Register" },
+      {
+        property: "og:description",
+        content:
+          "Secure management system for client bookings, payments, commission and travel reminders.",
+      },
+    ],
+  }),
   component: Index,
 });
 
-// IMPORTANT: Replace this placeholder. See ./README.md for routing conventions.
 function Index() {
+  const navigate = useNavigate();
+  const { session, loading } = useSession();
+
+  useEffect(() => {
+    if (loading) return;
+    navigate({ to: session ? "/dashboard" : "/auth", replace: true });
+  }, [loading, session, navigate]);
+
   return (
-    <div
-      className="flex min-h-screen items-center justify-center"
-      style={{ backgroundColor: "#fcfbf8" }}
-    >
-      <img
-        data-lovable-blank-page-placeholder="REMOVE_THIS"
-        src="https://cdn.gpteng.co/blank-app-v1.svg"
-        alt="Your app will live here!"
-      />
+    <div className="flex min-h-screen flex-col items-center justify-center gap-4 bg-sidebar px-4 text-center">
+      <span className="grid size-12 place-items-center rounded-xl bg-primary text-primary-foreground">
+        <Plane className="size-6" />
+      </span>
+      <div>
+        <h1 className="font-display text-xl font-semibold tracking-wide text-foreground">
+          ZARIN TRAVELS &amp; TOURS
+        </h1>
+        <p className="text-xs uppercase tracking-[0.18em] text-muted-foreground">
+          Client &amp; Flight Register
+        </p>
+      </div>
+      <Loader2 className="size-5 animate-spin text-muted-foreground" />
     </div>
   );
 }
