@@ -15,6 +15,13 @@
       "when": 1790075037416,
       "tag": "0001_first_user_becomes_admin",
       "breakpoints": true
+    },
+    {
+      "idx": 2,
+      "version": "7",
+      "when": 1790140004802,
+      "tag": "0002_zarin_phase2_airline_seed",
+      "breakpoints": true
     }
   ]
 }
