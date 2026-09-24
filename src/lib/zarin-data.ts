@@ -11,12 +11,12 @@ export type TransactionRow = Tables<"transactions"> & {
 };
 
 export type RegisterFilters = {
-  search?: string;
-  airlineId?: string;
-  clientId?: string;
-  status?: Enums<"transaction_status"> | "all";
-  from?: string;
-  to?: string;
+  search?: string | undefined;
+  airlineId?: string | undefined;
+  clientId?: string | undefined;
+  status?: Enums<"transaction_status"> | "all" | undefined;
+  from?: string | undefined;
+  to?: string | undefined;
 };
 
 const TRANSACTION_SELECT =
