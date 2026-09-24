@@ -12,11 +12,9 @@ import { Route as rootRouteImport } from './routes/__root'
 import { Route as IndexRouteImport } from './routes/index'
 import { Route as AuthenticatedRouteRouteImport } from './routes/_authenticated/route'
 import { Route as AuthRouteImport } from './routes/auth'
-import { Route as AuthenticatedClientsRouteImport } from './routes/_authenticated/clients'
 import { Route as AuthenticatedDashboardRouteImport } from './routes/_authenticated/dashboard'
 import { Route as AuthenticatedRemindersRouteImport } from './routes/_authenticated/reminders'
 import { Route as AuthenticatedReportsRouteImport } from './routes/_authenticated/reports'
-import { Route as AuthenticatedTransactionsRouteImport } from './routes/_authenticated/transactions'
 import { Route as AuthenticatedSettingsAirlinesRouteImport } from './routes/_authenticated/settings.airlines'
 import { Route as AuthenticatedSettingsUsersRouteImport } from './routes/_authenticated/settings.users'
 
@@ -34,11 +32,6 @@ const AuthRoute = AuthRouteImport.update({
   path: '/auth',
   getParentRoute: () => rootRouteImport,
 } as any)
-const AuthenticatedClientsRoute = AuthenticatedClientsRouteImport.update({
-  id: '/clients',
-  path: '/clients',
-  getParentRoute: () => AuthenticatedRouteRoute,
-} as any)
 const AuthenticatedDashboardRoute = AuthenticatedDashboardRouteImport.update({
   id: '/dashboard',
   path: '/dashboard',
@@ -54,12 +47,6 @@ const AuthenticatedReportsRoute = AuthenticatedReportsRouteImport.update({
   path: '/reports',
   getParentRoute: () => AuthenticatedRouteRoute,
 } as any)
-const AuthenticatedTransactionsRoute =
-  AuthenticatedTransactionsRouteImport.update({
-    id: '/transactions',
-    path: '/transactions',
-    getParentRoute: () => AuthenticatedRouteRoute,
-  } as any)
 const AuthenticatedSettingsAirlinesRoute =
   AuthenticatedSettingsAirlinesRouteImport.update({
     id: '/settings/airlines',
@@ -76,22 +63,18 @@ const AuthenticatedSettingsUsersRoute =
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
   '/auth': typeof AuthRoute
-  '/clients': typeof AuthenticatedClientsRoute
   '/dashboard': typeof AuthenticatedDashboardRoute
   '/reminders': typeof AuthenticatedRemindersRoute
   '/reports': typeof AuthenticatedReportsRoute
-  '/transactions': typeof AuthenticatedTransactionsRoute
   '/settings/airlines': typeof AuthenticatedSettingsAirlinesRoute
   '/settings/users': typeof AuthenticatedSettingsUsersRoute
 }
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
   '/auth': typeof AuthRoute
-  '/clients': typeof AuthenticatedClientsRoute
   '/dashboard': typeof AuthenticatedDashboardRoute
   '/reminders': typeof AuthenticatedRemindersRoute
   '/reports': typeof AuthenticatedReportsRoute
-  '/transactions': typeof AuthenticatedTransactionsRoute
   '/settings/airlines': typeof AuthenticatedSettingsAirlinesRoute
   '/settings/users': typeof AuthenticatedSettingsUsersRoute
 }
@@ -100,11 +83,9 @@ export interface FileRoutesById {
   '/': typeof IndexRoute
   '/_authenticated': typeof AuthenticatedRouteRouteWithChildren
   '/auth': typeof AuthRoute
-  '/_authenticated/clients': typeof AuthenticatedClientsRoute
   '/_authenticated/dashboard': typeof AuthenticatedDashboardRoute
   '/_authenticated/reminders': typeof AuthenticatedRemindersRoute
   '/_authenticated/reports': typeof AuthenticatedReportsRoute
-  '/_authenticated/transactions': typeof AuthenticatedTransactionsRoute
   '/_authenticated/settings/airlines': typeof AuthenticatedSettingsAirlinesRoute
   '/_authenticated/settings/users': typeof AuthenticatedSettingsUsersRoute
 }
@@ -113,22 +94,18 @@ export interface FileRouteTypes {
   fullPaths:
     | '/'
     | '/auth'
-    | '/clients'
     | '/dashboard'
     | '/reminders'
     | '/reports'
-    | '/transactions'
     | '/settings/airlines'
     | '/settings/users'
   fileRoutesByTo: FileRoutesByTo
   to:
     | '/'
     | '/auth'
-    | '/clients'
     | '/dashboard'
     | '/reminders'
     | '/reports'
-    | '/transactions'
     | '/settings/airlines'
     | '/settings/users'
   id:
@@ -136,11 +113,9 @@ export interface FileRouteTypes {
     | '/'
     | '/_authenticated'
     | '/auth'
-    | '/_authenticated/clients'
     | '/_authenticated/dashboard'
     | '/_authenticated/reminders'
     | '/_authenticated/reports'
-    | '/_authenticated/transactions'
     | '/_authenticated/settings/airlines'
     | '/_authenticated/settings/users'
   fileRoutesById: FileRoutesById
@@ -174,13 +149,6 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AuthRouteImport
       parentRoute: typeof rootRouteImport
     }
-    '/_authenticated/clients': {
-      id: '/_authenticated/clients'
-      path: '/clients'
-      fullPath: '/clients'
-      preLoaderRoute: typeof AuthenticatedClientsRouteImport
-      parentRoute: typeof AuthenticatedRouteRoute
-    }
     '/_authenticated/dashboard': {
       id: '/_authenticated/dashboard'
       path: '/dashboard'
@@ -202,13 +170,6 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AuthenticatedReportsRouteImport
       parentRoute: typeof AuthenticatedRouteRoute
     }
-    '/_authenticated/transactions': {
-      id: '/_authenticated/transactions'
-      path: '/transactions'
-      fullPath: '/transactions'
-      preLoaderRoute: typeof AuthenticatedTransactionsRouteImport
-      parentRoute: typeof AuthenticatedRouteRoute
-    }
     '/_authenticated/settings/airlines': {
       id: '/_authenticated/settings/airlines'
       path: '/settings/airlines'
@@ -227,21 +188,17 @@ declare module '@tanstack/react-router' {
 }
 
 interface AuthenticatedRouteRouteChildren {
-  AuthenticatedClientsRoute: typeof AuthenticatedClientsRoute
   AuthenticatedDashboardRoute: typeof AuthenticatedDashboardRoute
   AuthenticatedRemindersRoute: typeof AuthenticatedRemindersRoute
   AuthenticatedReportsRoute: typeof AuthenticatedReportsRoute
-  AuthenticatedTransactionsRoute: typeof AuthenticatedTransactionsRoute
   AuthenticatedSettingsAirlinesRoute: typeof AuthenticatedSettingsAirlinesRoute
   AuthenticatedSettingsUsersRoute: typeof AuthenticatedSettingsUsersRoute
 }
 
 const AuthenticatedRouteRouteChildren: AuthenticatedRouteRouteChildren = {
-  AuthenticatedClientsRoute: AuthenticatedClientsRoute,
   AuthenticatedDashboardRoute: AuthenticatedDashboardRoute,
   AuthenticatedRemindersRoute: AuthenticatedRemindersRoute,
   AuthenticatedReportsRoute: AuthenticatedReportsRoute,
-  AuthenticatedTransactionsRoute: AuthenticatedTransactionsRoute,
   AuthenticatedSettingsAirlinesRoute: AuthenticatedSettingsAirlinesRoute,
   AuthenticatedSettingsUsersRoute: AuthenticatedSettingsUsersRoute,
 }
