@@ -22,6 +22,13 @@
       "when": 1790140004802,
       "tag": "0002_zarin_phase2_airline_seed",
       "breakpoints": true
+    },
+    {
+      "idx": 3,
+      "version": "7",
+      "when": 1790225585455,
+      "tag": "0003_sync_reminders_security_definer",
+      "breakpoints": true
     }
   ]
 }
