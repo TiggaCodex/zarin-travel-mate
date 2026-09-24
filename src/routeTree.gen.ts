@@ -18,6 +18,7 @@ import { Route as AuthenticatedReportsRouteImport } from './routes/_authenticate
 import { Route as AuthenticatedSettingsAirlinesRouteImport } from './routes/_authenticated/settings.airlines'
 import { Route as AuthenticatedSettingsUsersRouteImport } from './routes/_authenticated/settings.users'
 import { Route as AuthenticatedTransactionsIndexRouteImport } from './routes/_authenticated/transactions.index'
+import { Route as AuthenticatedTransactionsTransactionIdRouteImport } from './routes/_authenticated/transactions.$transactionId'
 import { Route as AuthenticatedTransactionsNewRouteImport } from './routes/_authenticated/transactions.new'
 
 const IndexRoute = IndexRouteImport.update({
@@ -67,6 +68,12 @@ const AuthenticatedTransactionsIndexRoute =
     path: '/transactions/',
     getParentRoute: () => AuthenticatedRouteRoute,
   } as any)
+const AuthenticatedTransactionsTransactionIdRoute =
+  AuthenticatedTransactionsTransactionIdRouteImport.update({
+    id: '/transactions/$transactionId',
+    path: '/transactions/$transactionId',
+    getParentRoute: () => AuthenticatedRouteRoute,
+  } as any)
 const AuthenticatedTransactionsNewRoute =
   AuthenticatedTransactionsNewRouteImport.update({
     id: '/transactions/new',
@@ -82,6 +89,7 @@ export interface FileRoutesByFullPath {
   '/reports': typeof AuthenticatedReportsRoute
   '/settings/airlines': typeof AuthenticatedSettingsAirlinesRoute
   '/settings/users': typeof AuthenticatedSettingsUsersRoute
+  '/transactions/$transactionId': typeof AuthenticatedTransactionsTransactionIdRoute
   '/transactions/new': typeof AuthenticatedTransactionsNewRoute
   '/transactions/': typeof AuthenticatedTransactionsIndexRoute
 }
@@ -93,6 +101,7 @@ export interface FileRoutesByTo {
   '/reports': typeof AuthenticatedReportsRoute
   '/settings/airlines': typeof AuthenticatedSettingsAirlinesRoute
   '/settings/users': typeof AuthenticatedSettingsUsersRoute
+  '/transactions/$transactionId': typeof AuthenticatedTransactionsTransactionIdRoute
   '/transactions/new': typeof AuthenticatedTransactionsNewRoute
   '/transactions': typeof AuthenticatedTransactionsIndexRoute
 }
@@ -106,6 +115,7 @@ export interface FileRoutesById {
   '/_authenticated/reports': typeof AuthenticatedReportsRoute
   '/_authenticated/settings/airlines': typeof AuthenticatedSettingsAirlinesRoute
   '/_authenticated/settings/users': typeof AuthenticatedSettingsUsersRoute
+  '/_authenticated/transactions/$transactionId': typeof AuthenticatedTransactionsTransactionIdRoute
   '/_authenticated/transactions/new': typeof AuthenticatedTransactionsNewRoute
   '/_authenticated/transactions/': typeof AuthenticatedTransactionsIndexRoute
 }
@@ -119,6 +129,7 @@ export interface FileRouteTypes {
     | '/reports'
     | '/settings/airlines'
     | '/settings/users'
+    | '/transactions/$transactionId'
     | '/transactions/new'
     | '/transactions/'
   fileRoutesByTo: FileRoutesByTo
@@ -130,6 +141,7 @@ export interface FileRouteTypes {
     | '/reports'
     | '/settings/airlines'
     | '/settings/users'
+    | '/transactions/$transactionId'
     | '/transactions/new'
     | '/transactions'
   id:
@@ -142,6 +154,7 @@ export interface FileRouteTypes {
     | '/_authenticated/reports'
     | '/_authenticated/settings/airlines'
     | '/_authenticated/settings/users'
+    | '/_authenticated/transactions/$transactionId'
     | '/_authenticated/transactions/new'
     | '/_authenticated/transactions/'
   fileRoutesById: FileRoutesById
@@ -217,6 +230,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AuthenticatedTransactionsIndexRouteImport
       parentRoute: typeof AuthenticatedRouteRoute
     }
+    '/_authenticated/transactions/$transactionId': {
+      id: '/_authenticated/transactions/$transactionId'
+      path: '/transactions/$transactionId'
+      fullPath: '/transactions/$transactionId'
+      preLoaderRoute: typeof AuthenticatedTransactionsTransactionIdRouteImport
+      parentRoute: typeof AuthenticatedRouteRoute
+    }
     '/_authenticated/transactions/new': {
       id: '/_authenticated/transactions/new'
       path: '/transactions/new'
@@ -233,6 +253,7 @@ interface AuthenticatedRouteRouteChildren {
   AuthenticatedReportsRoute: typeof AuthenticatedReportsRoute
   AuthenticatedSettingsAirlinesRoute: typeof AuthenticatedSettingsAirlinesRoute
   AuthenticatedSettingsUsersRoute: typeof AuthenticatedSettingsUsersRoute
+  AuthenticatedTransactionsTransactionIdRoute: typeof AuthenticatedTransactionsTransactionIdRoute
   AuthenticatedTransactionsNewRoute: typeof AuthenticatedTransactionsNewRoute
   AuthenticatedTransactionsIndexRoute: typeof AuthenticatedTransactionsIndexRoute
 }
@@ -243,6 +264,8 @@ const AuthenticatedRouteRouteChildren: AuthenticatedRouteRouteChildren = {
   AuthenticatedReportsRoute: AuthenticatedReportsRoute,
   AuthenticatedSettingsAirlinesRoute: AuthenticatedSettingsAirlinesRoute,
   AuthenticatedSettingsUsersRoute: AuthenticatedSettingsUsersRoute,
+  AuthenticatedTransactionsTransactionIdRoute:
+    AuthenticatedTransactionsTransactionIdRoute,
   AuthenticatedTransactionsNewRoute: AuthenticatedTransactionsNewRoute,
   AuthenticatedTransactionsIndexRoute: AuthenticatedTransactionsIndexRoute,
 }
