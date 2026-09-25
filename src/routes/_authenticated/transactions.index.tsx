@@ -31,6 +31,7 @@ import {
   scopeLabel,
   travelClassLabel,
 } from "@/lib/format";
+import { CommissionValue } from "@/components/payment-bits";
 import { useAirlines, useClients, useTransactions, type RegisterFilters } from "@/lib/zarin-data";
 
 export const Route = createFileRoute("/_authenticated/transactions/")({
@@ -250,7 +251,7 @@ function RegisterPage() {
                         {formatNaira(row.payable)}
                       </TableCell>
                       <TableCell className="text-right tabular-nums">
-                        {formatNaira(row.client_fare - row.payable)}
+                        <CommissionValue financials={row.financials} />
                         <span className="ml-1 text-xs text-muted-foreground">
                           {scopeLabel(row.airlines?.scope)}
                         </span>
