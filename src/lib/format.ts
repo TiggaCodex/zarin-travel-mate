@@ -57,8 +57,28 @@ export function formatDateTime(value: string | null | undefined) {
   });
 }
 
+/** Business timezone: all "today" logic uses Lagos calendar dates, not the browser's clock zone. */
+export const BUSINESS_TZ = "Africa/Lagos";
+
 export function todayISO() {
-  const now = new Date();
-  const offset = now.getTimezoneOffset();
-  return new Date(now.getTime() - offset * 60000).toISOString().slice(0, 10);
+  // en-CA formats as YYYY-MM-DD
+  return new Intl.DateTimeFormat("en-CA", {
+    timeZone: BUSINESS_TZ,
+    year: "numeric",
+    month: "2-digit",
+    day: "2-digit",
+  }).format(new Date());
+}
+
+/** Pure calendar arithmetic on YYYY-MM-DD strings (UTC-based, no timezone drift). */
+export function addDaysISO(iso: string, days: number) {
+  const d = new Date(`${iso}T00:00:00Z`);
+  d.setUTCDate(d.getUTCDate() + days);
+  return d.toISOString().slice(0, 10);
+}
+
+export function formatLongDate(iso: string | null | undefined) {
+  if (!iso) return "—";
+  const d = new Date(`${iso.slice(0, 10)}T00:00:00Z`);
+  return d.toLocaleDateString("en-GB", { day: "numeric", month: "long", year: "numeric", timeZone: "UTC" });
 }
