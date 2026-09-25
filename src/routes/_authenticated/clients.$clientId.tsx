@@ -18,6 +18,8 @@ import {
 } from "@/components/ui/table";
 import { formatDate, formatNaira, formatSerial, travelClassLabel } from "@/lib/format";
 import { PaymentStatusBadge } from "@/components/payment-bits";
+import { KindLabel, ReminderStatusBadge } from "@/components/reminder-bits";
+import { useClientReminders } from "@/lib/reminders";
 import { useClient, useTransactions } from "@/lib/zarin-data";
 
 export const Route = createFileRoute("/_authenticated/clients/$clientId")({
@@ -43,6 +45,7 @@ function ClientProfilePage() {
     status: "all",
   });
   const [editOpen, setEditOpen] = useState(false);
+  const { data: travel } = useClientReminders(clientId);
 
   if (isLoading) {
     return (
@@ -126,6 +129,36 @@ function ClientProfilePage() {
           </CardHeader>
           <CardContent>
             <p className="whitespace-pre-line text-sm text-muted-foreground">{client.notes}</p>
+          </CardContent>
+        </Card>
+      ) : null}
+
+      {travel && travel.length > 0 ? (
+        <Card>
+          <CardHeader className="pb-2">
+            <CardTitle className="text-base">Upcoming travel</CardTitle>
+          </CardHeader>
+          <CardContent>
+            <ul className="divide-y">
+              {travel.map((r) => (
+                <li key={r.id} className="flex flex-wrap items-center justify-between gap-2 py-2">
+                  <div>
+                    <KindLabel kind={r.kind} />
+                    <p className="text-sm">
+                      {formatDate(r.due_date)} · {r.transactions?.airlines?.name} ·{" "}
+                      <Link
+                        to="/transactions/$transactionId"
+                        params={{ transactionId: r.transaction_id }}
+                        className="text-primary underline-offset-4 hover:underline"
+                      >
+                        Booking {formatSerial(r.transactions?.serial_number)}
+                      </Link>
+                    </p>
+                  </div>
+                  <ReminderStatusBadge status={r.status} />
+                </li>
+              ))}
+            </ul>
           </CardContent>
         </Card>
       ) : null}

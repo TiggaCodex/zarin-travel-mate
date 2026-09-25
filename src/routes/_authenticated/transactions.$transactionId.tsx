@@ -42,6 +42,14 @@ import {
   TableRow,
 } from "@/components/ui/table";
 import {
+  KindLabel,
+  ReminderActions,
+  ReminderStatusBadge,
+  SendReminderDialog,
+} from "@/components/reminder-bits";
+import { formatLongDate } from "@/lib/format";
+import { useTransactionReminders, type ReminderRow } from "@/lib/reminders";
+import {
   usePayments,
   useProfileNames,
   useTransaction,
@@ -79,6 +87,8 @@ function TransactionDetailPage() {
   const voidBooking = useVoidTransaction();
   const [voidOpen, setVoidOpen] = useState(false);
   const [payOpen, setPayOpen] = useState(false);
+  const [sending, setSending] = useState<ReminderRow | null>(null);
+  const { data: reminders } = useTransactionReminders(transactionId);
   const { data: payments, isLoading: paymentsLoading } = usePayments(transactionId);
   const [reason, setReason] = useState("");
   const [reasonError, setReasonError] = useState("");
@@ -218,6 +228,38 @@ function TransactionDetailPage() {
       </Card>
 
       <Card>
+        <CardHeader>
+          <CardTitle className="text-base">Travel reminders</CardTitle>
+        </CardHeader>
+        <CardContent className="space-y-3">
+          {!reminders || reminders.length === 0 ? (
+            <p className="text-sm text-muted-foreground">No reminders for this booking.</p>
+          ) : (
+            reminders.map((r) => (
+              <div
+                key={r.id}
+                className="flex flex-wrap items-center justify-between gap-3 rounded-lg border p-3"
+              >
+                <div className="space-y-1">
+                  <KindLabel kind={r.kind} />
+                  <p className="text-sm font-medium">{formatLongDate(r.due_date)}</p>
+                </div>
+                <div className="flex flex-wrap items-center gap-3">
+                  <ReminderStatusBadge status={r.status} />
+                  <ReminderActions reminder={r} onSend={setSending} />
+                </div>
+              </div>
+            ))
+          )}
+          {transaction.status === "cancelled" ? (
+            <p className="text-xs text-muted-foreground">
+              Kept on record only — voided bookings do not appear in reminder lists.
+            </p>
+          ) : null}
+        </CardContent>
+      </Card>
+
+      <Card>
         <CardHeader className="flex flex-row items-center justify-between gap-2 space-y-0">
           <CardTitle className="text-base">Financial summary</CardTitle>
           {canPay ? (
@@ -306,6 +348,8 @@ function TransactionDetailPage() {
           <Field label="Last updated" value={formatDateTime(transaction.updated_at)} />
         </CardContent>
       </Card>
+
+      <SendReminderDialog reminder={sending} onOpenChange={(o) => !o && setSending(null)} />
 
       <RecordPaymentDialog
         open={payOpen}
