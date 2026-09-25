@@ -1,6 +1,6 @@
 import { createFileRoute, Link } from "@tanstack/react-router";
 import { useState } from "react";
-import { ArrowLeft, Ban, Pencil } from "lucide-react";
+import { ArrowLeft, Ban, Pencil, Wallet } from "lucide-react";
 import { toast } from "sonner";
 
 import { AppShell } from "@/components/app-shell";
@@ -27,7 +27,26 @@ import {
   scopeLabel,
   travelClassLabel,
 } from "@/lib/format";
-import { useProfileNames, useTransaction, useVoidTransaction } from "@/lib/zarin-data";
+import {
+  paymentMethodLabel,
+  PaymentStatusBadge,
+  RecordPaymentDialog,
+} from "@/components/payment-bits";
+import {
+  Table,
+  TableBody,
+  TableCell,
+  TableFooter,
+  TableHead,
+  TableHeader,
+  TableRow,
+} from "@/components/ui/table";
+import {
+  usePayments,
+  useProfileNames,
+  useTransaction,
+  useVoidTransaction,
+} from "@/lib/zarin-data";
 
 export const Route = createFileRoute("/_authenticated/transactions/$transactionId")({
   head: () => ({
@@ -59,10 +78,16 @@ function TransactionDetailPage() {
   const { isAdmin, user } = useCurrentAccount();
   const voidBooking = useVoidTransaction();
   const [voidOpen, setVoidOpen] = useState(false);
+  const [payOpen, setPayOpen] = useState(false);
+  const { data: payments, isLoading: paymentsLoading } = usePayments(transactionId);
   const [reason, setReason] = useState("");
   const [reasonError, setReasonError] = useState("");
 
-  const { data: names } = useProfileNames([transaction?.created_by, transaction?.cancelled_by]);
+  const { data: names } = useProfileNames([
+    transaction?.created_by,
+    transaction?.cancelled_by,
+    ...(payments ?? []).map((p) => p.recorded_by),
+  ]);
 
   const canEdit =
     Boolean(transaction) &&
@@ -104,7 +129,9 @@ function TransactionDetailPage() {
     );
   }
 
-  const commission = transaction.client_fare - transaction.payable;
+  const fin = transaction.financials;
+  const canPay =
+    transaction.status === "active" && Boolean(fin) && (fin?.outstanding ?? 0) > 0;
 
   return (
     <AppShell
@@ -191,13 +218,81 @@ function TransactionDetailPage() {
       </Card>
 
       <Card>
-        <CardHeader>
-          <CardTitle className="text-base">Financial</CardTitle>
+        <CardHeader className="flex flex-row items-center justify-between gap-2 space-y-0">
+          <CardTitle className="text-base">Financial summary</CardTitle>
+          {canPay ? (
+            <Button size="sm" onClick={() => setPayOpen(true)}>
+              <Wallet className="size-4" /> Record payment
+            </Button>
+          ) : null}
         </CardHeader>
-        <CardContent className="grid gap-4 sm:grid-cols-3">
+        <CardContent className="grid gap-4 sm:grid-cols-4">
           <Field label="Client fare" value={formatNaira(transaction.client_fare)} />
           <Field label="Payable" value={formatNaira(transaction.payable)} />
-          <Field label="Potential commission" value={formatNaira(commission)} />
+          <Field label="Potential commission" value={formatNaira(fin?.potential_commission)} />
+          <Field label="Payment status" value={<PaymentStatusBadge status={fin?.payment_status} />} />
+          <Field label="Amount paid" value={formatNaira(fin?.amount_paid)} />
+          <Field
+            label="Outstanding"
+            value={
+              <span className={(fin?.outstanding ?? 0) > 0 ? "text-destructive" : undefined}>
+                {formatNaira(fin?.outstanding)}
+              </span>
+            }
+          />
+          <Field label="Recognized commission" value={formatNaira(fin?.recognized_commission)} />
+          <Field label="Pending commission" value={formatNaira(fin?.pending_commission)} />
+        </CardContent>
+      </Card>
+
+      <Card>
+        <CardHeader>
+          <CardTitle className="text-base">Payment history</CardTitle>
+        </CardHeader>
+        <CardContent className="p-0">
+          {paymentsLoading ? (
+            <div className="p-6">
+              <Skeleton className="h-10 w-full" />
+            </div>
+          ) : !payments || payments.length === 0 ? (
+            <p className="p-6 text-sm text-muted-foreground">No payments recorded yet.</p>
+          ) : (
+            <div className="overflow-x-auto">
+              <Table className="min-w-[720px]">
+                <TableHeader>
+                  <TableRow>
+                    <TableHead>Date</TableHead>
+                    <TableHead className="text-right">Amount</TableHead>
+                    <TableHead>Method</TableHead>
+                    <TableHead>Reference</TableHead>
+                    <TableHead>Note</TableHead>
+                    <TableHead>Recorded by</TableHead>
+                  </TableRow>
+                </TableHeader>
+                <TableBody>
+                  {payments.map((p) => (
+                    <TableRow key={p.id}>
+                      <TableCell>{formatDate(p.paid_on)}</TableCell>
+                      <TableCell className="text-right tabular-nums">{formatNaira(p.amount)}</TableCell>
+                      <TableCell>{paymentMethodLabel(p.method)}</TableCell>
+                      <TableCell>{p.reference || "—"}</TableCell>
+                      <TableCell>{p.note || "—"}</TableCell>
+                      <TableCell>{names?.[p.recorded_by ?? ""] ?? "—"}</TableCell>
+                    </TableRow>
+                  ))}
+                </TableBody>
+                <TableFooter>
+                  <TableRow>
+                    <TableCell className="font-semibold">Total paid</TableCell>
+                    <TableCell className="text-right font-semibold tabular-nums">
+                      {formatNaira(fin?.amount_paid)}
+                    </TableCell>
+                    <TableCell colSpan={4} />
+                  </TableRow>
+                </TableFooter>
+              </Table>
+            </div>
+          )}
         </CardContent>
       </Card>
 
@@ -211,6 +306,13 @@ function TransactionDetailPage() {
           <Field label="Last updated" value={formatDateTime(transaction.updated_at)} />
         </CardContent>
       </Card>
+
+      <RecordPaymentDialog
+        open={payOpen}
+        onOpenChange={setPayOpen}
+        transactionId={transactionId}
+        outstanding={fin?.outstanding ?? 0}
+      />
 
       <Dialog open={voidOpen} onOpenChange={setVoidOpen}>
         <DialogContent>

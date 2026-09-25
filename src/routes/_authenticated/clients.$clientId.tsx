@@ -17,6 +17,7 @@ import {
   TableRow,
 } from "@/components/ui/table";
 import { formatDate, formatNaira, formatSerial, travelClassLabel } from "@/lib/format";
+import { PaymentStatusBadge } from "@/components/payment-bits";
 import { useClient, useTransactions } from "@/lib/zarin-data";
 
 export const Route = createFileRoute("/_authenticated/clients/$clientId")({
@@ -151,7 +152,7 @@ function ClientProfilePage() {
             </div>
           ) : (
             <div className="overflow-x-auto">
-              <Table className="min-w-[860px]">
+              <Table className="min-w-[1100px]">
                 <TableHeader>
                   <TableRow>
                     <TableHead>S/N</TableHead>
@@ -160,7 +161,10 @@ function ClientProfilePage() {
                     <TableHead>Class</TableHead>
                     <TableHead>Departure</TableHead>
                     <TableHead className="text-right">Client fare</TableHead>
-                    <TableHead className="text-right">Commission</TableHead>
+                    <TableHead className="text-right">Amount paid</TableHead>
+                    <TableHead className="text-right">Outstanding</TableHead>
+                    <TableHead>Status</TableHead>
+                    <TableHead className="text-right">Recognized commission</TableHead>
                   </TableRow>
                 </TableHeader>
                 <TableBody>
@@ -186,7 +190,16 @@ function ClientProfilePage() {
                       <TableCell>{formatDate(row.departure_date)}</TableCell>
                       <TableCell className="text-right">{formatNaira(row.client_fare)}</TableCell>
                       <TableCell className="text-right">
-                        {formatNaira(row.client_fare - row.payable)}
+                        {formatNaira(row.financials?.amount_paid)}
+                      </TableCell>
+                      <TableCell className="text-right">
+                        {formatNaira(row.financials?.outstanding)}
+                      </TableCell>
+                      <TableCell>
+                        <PaymentStatusBadge status={row.financials?.payment_status} />
+                      </TableCell>
+                      <TableCell className="text-right">
+                        {formatNaira(row.financials?.recognized_commission)}
                       </TableCell>
                     </TableRow>
                   ))}

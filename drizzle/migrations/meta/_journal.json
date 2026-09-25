@@ -29,6 +29,13 @@
       "when": 1790225585455,
       "tag": "0003_sync_reminders_security_definer",
       "breakpoints": true
+    },
+    {
+      "idx": 4,
+      "version": "7",
+      "when": 1790312091433,
+      "tag": "0004_zarin_phase3_payments",
+      "breakpoints": true
     }
   ]
 }
