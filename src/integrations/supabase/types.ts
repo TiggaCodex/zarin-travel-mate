@@ -352,6 +352,7 @@ export type Database = {
       }
     }
     Functions: {
+      business_report: { Args: { _from: string; _to: string }; Returns: Json }
       has_role: {
         Args: {
           _role: Database["public"]["Enums"]["app_role"]
