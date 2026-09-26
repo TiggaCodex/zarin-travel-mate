@@ -35,7 +35,7 @@ function DashboardPage() {
   return (
     <AppShell
       title={`Welcome, ${name}`}
-      description={data ? `Today is ${formatLongDate(data.today)}.` : undefined}
+      description={data ? `Today is ${formatLongDate(data.today)}.` : "Loading today…"}
     >
       <Card>
         <CardHeader>
