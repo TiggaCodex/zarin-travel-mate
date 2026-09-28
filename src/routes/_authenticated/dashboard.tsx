@@ -9,6 +9,9 @@ import { Skeleton } from "@/components/ui/skeleton";
 import { useCurrentAccount } from "@/hooks/useAuth";
 import { formatDate, formatLongDate } from "@/lib/format";
 import { useReminderBoard } from "@/lib/reminders";
+import { KpiGrid, RangePicker, ReportCharts } from "@/components/report-bits";
+import { rangeFor, useBusinessReport, type DateRange } from "@/lib/reports";
+import { useState } from "react";
 
 export const Route = createFileRoute("/_authenticated/dashboard")({
   head: () => ({
@@ -27,8 +30,20 @@ export const Route = createFileRoute("/_authenticated/dashboard")({
   component: DashboardPage,
 });
 
+function BusinessSection() {
+  const [range, setRange] = useState<DateRange>(() => rangeFor("today"));
+  const report = useBusinessReport(range);
+  return (
+    <div className="space-y-4">
+      <RangePicker value={range} onChange={setRange} />
+      <KpiGrid report={report.data} loading={report.isLoading} />
+      {report.data ? <ReportCharts report={report.data} range={range} /> : null}
+    </div>
+  );
+}
+
 function DashboardPage() {
-  const { profile, user } = useCurrentAccount();
+  const { profile, user, isAdmin } = useCurrentAccount();
   const name = profile?.full_name || user?.email || "there";
   const { data, isLoading } = useReminderBoard(7);
 
@@ -37,6 +52,7 @@ function DashboardPage() {
       title={`Welcome, ${name}`}
       description={data ? `Today is ${formatLongDate(data.today)}.` : "Loading today…"}
     >
+      {isAdmin ? <BusinessSection /> : null}
       <Card>
         <CardHeader>
           <CardTitle className="text-base">Travel today</CardTitle>
