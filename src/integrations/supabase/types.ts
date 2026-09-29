@@ -352,6 +352,14 @@ export type Database = {
       }
     }
     Functions: {
+      admin_set_staff_active: {
+        Args: { _active: boolean; _user: string }
+        Returns: undefined
+      }
+      admin_set_staff_role: {
+        Args: { _role: Database["public"]["Enums"]["app_role"]; _user: string }
+        Returns: undefined
+      }
       business_report: { Args: { _from: string; _to: string }; Returns: Json }
       has_role: {
         Args: {
@@ -362,6 +370,7 @@ export type Database = {
       }
       is_admin: { Args: never; Returns: boolean }
       is_staff_member: { Args: never; Returns: boolean }
+      other_active_admins: { Args: { _user: string }; Returns: number }
     }
     Enums: {
       airline_scope: "local" | "international"
