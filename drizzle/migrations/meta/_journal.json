@@ -57,6 +57,13 @@
       "when": 1790569729258,
       "tag": "0007_fix_report_scope_breakdown",
       "breakpoints": true
+    },
+    {
+      "idx": 8,
+      "version": "7",
+      "when": 1790654887762,
+      "tag": "0008_zarin_phase6a_staff",
+      "breakpoints": true
     }
   ]
 }
