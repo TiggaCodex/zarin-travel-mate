@@ -5,11 +5,50 @@
 //     React/TanStack dedupe, error logger plugins, and sandbox detection (port/host/strictPort).
 // You can pass additional config via defineConfig({ vite: { ... }, etc... }) if needed.
 import { defineConfig } from "@lovable.dev/vite-tanstack-config";
+import { VitePWA } from "vite-plugin-pwa";
 
 export default defineConfig({
   tanstackStart: {
     // Redirect TanStack Start's bundled server entry to src/server.ts (our SSR error wrapper).
     // nitro/vite builds from this
     server: { entry: "server" },
+  },
+  vite: {
+    plugins: [
+      VitePWA({
+        strategies: "generateSW",
+        registerType: "autoUpdate",
+        injectRegister: null,
+        manifest: false, // served statically from public/manifest.webmanifest
+        devOptions: { enabled: false },
+        filename: "sw.js",
+        workbox: {
+          // Only static, hashed build assets + icons + offline page. Never API/database data.
+          globPatterns: ["assets/**/*.{js,css,woff2}", "icon-*.png", "apple-touch-icon.png", "offline.html"],
+          navigateFallback: null,
+          cleanupOutdatedCaches: true,
+          clientsClaim: true,
+          skipWaiting: true,
+          runtimeCaching: [
+            {
+              // Page HTML: always try the network first; pages hold no private data
+              // (signed-in screens load their data in the browser after auth).
+              urlPattern: ({ request, url }) =>
+                request.mode === "navigate" &&
+                !url.pathname.startsWith("/~oauth") &&
+                !url.pathname.startsWith("/api") &&
+                !url.pathname.startsWith("/_serverFn"),
+              handler: "NetworkFirst",
+              options: {
+                cacheName: "zarin-pages",
+                networkTimeoutSeconds: 6,
+                expiration: { maxEntries: 20, maxAgeSeconds: 60 * 60 * 24 },
+                precacheFallback: { fallbackURL: "/offline.html" },
+              },
+            },
+          ],
+        },
+      }),
+    ],
   },
 });
