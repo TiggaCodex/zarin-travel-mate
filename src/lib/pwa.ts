@@ -28,7 +28,7 @@ export async function setupServiceWorker() {
   const { registerSW } = await import("virtual:pwa-register");
   registerSW({
     immediate: true,
-    onRegisteredSW(_url, reg) {
+    onRegisteredSW(_url: string, reg: ServiceWorkerRegistration | undefined) {
       // Check for a newer version every 30 minutes and when the app regains focus.
       if (!reg) return;
       setInterval(() => reg.update().catch(() => {}), 30 * 60 * 1000);
