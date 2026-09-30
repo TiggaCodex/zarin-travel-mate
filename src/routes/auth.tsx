@@ -53,8 +53,15 @@ function AuthPage() {
     setNotice(null);
 
     if (mode === "signin") {
-      const { error: signInError } = await supabase.auth.signInWithPassword({ email, password });
+      const { data: signed, error: signInError } = await supabase.auth.signInWithPassword({ email, password });
       if (signInError) setError(signInError.message);
+      else if (signed.user) {
+        const { data: prof } = await supabase.from("profiles").select("is_active").eq("id", signed.user.id).maybeSingle();
+        if (prof && !prof.is_active) {
+          await supabase.auth.signOut();
+          setError("Your account is deactivated. Please contact an administrator.");
+        }
+      }
     } else {
       const { data, error: signUpError } = await supabase.auth.signUp({
         email,
