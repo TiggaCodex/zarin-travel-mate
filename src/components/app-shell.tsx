@@ -18,6 +18,7 @@ import { Sheet, SheetContent, SheetTrigger } from "@/components/ui/sheet";
 import { supabase } from "@/integrations/supabase/client";
 import { useCurrentAccount } from "@/hooks/useAuth";
 import { cn } from "@/lib/utils";
+import { InstallApp } from "@/components/install-app";
 
 type NavItem = {
   to: string;
@@ -103,6 +104,7 @@ export function AppShell({
           <NavList isAdmin={isAdmin} />
         </div>
         <div className="space-y-3 border-t border-sidebar-border pt-4">
+          <InstallApp />
           <div className="px-1 text-xs">
             <p className="truncate font-medium text-sidebar-foreground">
               {profile?.full_name || user?.email}
@@ -129,9 +131,12 @@ export function AppShell({
                   <Brand />
                   <NavList isAdmin={isAdmin} onNavigate={() => setMobileOpen(false)} />
                 </div>
-                <Button variant="outline" size="sm" onClick={handleSignOut}>
-                  <LogOut className="size-4" /> Sign out
-                </Button>
+                <div className="space-y-2">
+                  <InstallApp />
+                  <Button variant="outline" size="sm" className="h-10 w-full" onClick={handleSignOut}>
+                    <LogOut className="size-4" /> Sign out
+                  </Button>
+                </div>
               </div>
             </SheetContent>
           </Sheet>
