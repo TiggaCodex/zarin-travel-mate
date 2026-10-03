@@ -163,8 +163,7 @@ export function useTransactions(filters: RegisterFilters = {}) {
       let query = supabase
         .from("transactions")
         .select(TRANSACTION_SELECT)
-        .order("register_date", { ascending: false })
-        .order("serial_number", { ascending: false });
+        .order("serial_number", { ascending: true });
 
       if (filters.airlineId) query = query.eq("airline_id", filters.airlineId);
       if (filters.clientId) query = query.eq("client_id", filters.clientId);

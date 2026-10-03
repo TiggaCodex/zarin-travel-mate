@@ -344,7 +344,7 @@ function TransactionDetailPage() {
         </CardHeader>
         <CardContent className="grid gap-4 sm:grid-cols-3">
           <Field label="Created by" value={names?.[transaction.created_by ?? ""] ?? "—"} />
-          <Field label="Created at" value={formatDateTime(transaction.created_at)} />
+          <Field label="Submitted at" value={formatDateTime(transaction.created_at)} />
           <Field label="Last updated" value={formatDateTime(transaction.updated_at)} />
         </CardContent>
       </Card>

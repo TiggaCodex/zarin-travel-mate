@@ -26,7 +26,13 @@ import {
 
 type FormErrors = Partial<
   Record<
-    "client_id" | "airline_id" | "departure_date" | "return_date" | "client_fare" | "payable",
+    | "client_id"
+    | "airline_id"
+    | "register_date"
+    | "departure_date"
+    | "return_date"
+    | "client_fare"
+    | "payable",
     string
   >
 >;
@@ -48,6 +54,7 @@ export function TransactionForm({ transaction }: { transaction?: TransactionRow 
   const [travelClass, setTravelClass] = useState<TransactionInput["travel_class"]>(
     transaction?.travel_class ?? "economy",
   );
+  const [entryDate, setEntryDate] = useState(transaction?.register_date ?? todayISO());
   const [departureDate, setDepartureDate] = useState(transaction?.departure_date ?? "");
   const [returnDate, setReturnDate] = useState(transaction?.return_date ?? "");
   const [pnr, setPnr] = useState(transaction?.pnr ?? "");
@@ -76,6 +83,8 @@ export function TransactionForm({ transaction }: { transaction?: TransactionRow 
 
     const nextErrors: FormErrors = {};
     if (!clientId) nextErrors.client_id = "Select a client or add a new one.";
+    if (!entryDate) nextErrors.register_date = "Enter the entry date.";
+    else if (entryDate > todayISO()) nextErrors.register_date = "The entry date cannot be in the future.";
     if (!airlineId) nextErrors.airline_id = "Select an airline.";
     if (!departureDate) nextErrors.departure_date = "Enter the departure date.";
     if (returnDate && departureDate && returnDate < departureDate) {
@@ -94,7 +103,7 @@ export function TransactionForm({ transaction }: { transaction?: TransactionRow 
       client_id: clientId,
       airline_id: airlineId,
       travel_class: travelClass,
-      register_date: transaction?.register_date ?? todayISO(),
+      register_date: entryDate,
       departure_date: departureDate,
       return_date: returnDate || null,
       client_fare: fareValue!,
@@ -111,7 +120,7 @@ export function TransactionForm({ transaction }: { transaction?: TransactionRow 
         navigate({ to: "/transactions/$transactionId", params: { transactionId: transaction.id } });
       } else {
         const created = await create.mutateAsync(payload);
-        toast.success(`Booking saved as serial ${String(created.serial_number).padStart(4, "0")}`);
+        toast.success("Booking saved");
         navigate({ to: "/transactions/$transactionId", params: { transactionId: created.id } });
       }
     } catch (error) {
@@ -181,6 +190,25 @@ export function TransactionForm({ transaction }: { transaction?: TransactionRow 
                 ))}
               </SelectContent>
             </Select>
+          </div>
+
+          <div className="space-y-2 sm:col-span-2">
+            <Label htmlFor="entry-date">Entry date</Label>
+            <Input
+              id="entry-date"
+              type="date"
+              max={todayISO()}
+              value={entryDate}
+              onChange={(e) => setEntryDate(e.target.value)}
+              className="sm:max-w-xs"
+            />
+            {errors.register_date ? (
+              <p className="text-sm text-destructive">{errors.register_date}</p>
+            ) : (
+              <p className="text-xs text-muted-foreground">
+                The date this booking belongs to. Earlier dates are allowed; future dates are not.
+              </p>
+            )}
           </div>
 
           <div className="space-y-2">
