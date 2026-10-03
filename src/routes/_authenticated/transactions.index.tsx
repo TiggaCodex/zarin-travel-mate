@@ -68,7 +68,7 @@ function RegisterPage() {
   return (
     <AppShell
       title="Flight register"
-      description="Every booking recorded, newest register date first."
+      description="Every booking recorded, in entry-date order (oldest first)."
       actions={
         <Button asChild>
           <Link to="/transactions/new">
