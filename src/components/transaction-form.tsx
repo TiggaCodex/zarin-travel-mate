@@ -26,7 +26,13 @@ import {
 
 type FormErrors = Partial<
   Record<
-    "client_id" | "airline_id" | "departure_date" | "return_date" | "client_fare" | "payable",
+    | "client_id"
+    | "airline_id"
+    | "register_date"
+    | "departure_date"
+    | "return_date"
+    | "client_fare"
+    | "payable",
     string
   >
 >;
