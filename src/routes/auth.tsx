@@ -8,7 +8,7 @@ import { Label } from "@/components/ui/label";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Alert, AlertDescription } from "@/components/ui/alert";
 import { supabase } from "@/integrations/supabase/client";
-import { lovable } from "@/integrations/lovable/index";
+
 import { useSession } from "@/hooks/useAuth";
 
 export const Route = createFileRoute("/auth")({
@@ -84,19 +84,18 @@ function AuthPage() {
     setGoogleBusy(true);
     setError(null);
     setNotice(null);
-    const result = await lovable.auth.signInWithOAuth("google", {
-      redirect_uri: window.location.origin,
+
+    const { error } = await supabase.auth.signInWithOAuth({
+      provider: "google",
+      options: {
+        redirectTo: `${window.location.origin}/dashboard`,
+      },
     });
-    if (result.error) {
-      setError("Google sign-in failed. Please try again or use your email and password.");
+
+    if (error) {
+      setError(error.message);
       setGoogleBusy(false);
-      return;
     }
-    if (result.redirected) {
-      // Browser is redirecting to Google.
-      return;
-    }
-    setGoogleBusy(false);
   }
 
   async function handleSubmit(event: React.FormEvent) {
